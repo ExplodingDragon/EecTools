@@ -10,10 +10,9 @@ buildscript {
         maven { url = project.uri("https://jitpack.io") }
     }
 
-    val kotlinVersion: String by project
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.0")
     }
 }
 

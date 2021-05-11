@@ -8,7 +8,7 @@ class Main
 private val logger = Main::class.getLogger()
 
 fun main(args: Array<String>) {
-    logger.info("System Boot!")
+    logger.info("新工科智慧云 第三方组件!")
     UIApplication.boot(
         FXBoot.Builder(LoginActivity::class)
             .build()
