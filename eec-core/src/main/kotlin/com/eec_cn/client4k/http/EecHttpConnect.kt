@@ -2,6 +2,7 @@ package com.eec_cn.client4k.http
 
 import com.eec_cn.client4k.beans.DataWrapperBean
 import com.github.openEdgn.logger4k.getLogger
+import org.json.JSONException
 import org.json.JSONObject
 
 abstract class EecHttpConnect(
@@ -14,6 +15,7 @@ abstract class EecHttpConnect(
 
     override fun get(path: String, header: Map<String, String>): String {
         val head = header.toMutableMap()
+        includeHeader(head)
         head["User-Agent"] = userAgent
         head["Accept"] = "application/json"
         head["Accept-Language"] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
@@ -56,11 +58,14 @@ abstract class EecHttpConnect(
             success = jsonObject.getBoolean("success"),
             data = "",
             message = jsonObject.getString("message"),
-            status = jsonObject.getInt("status"),
-            tracer = jsonObject.getString("tracer")
+            status = jsonObject.getInt("status")
         )
         if (output.success) {
-            output.data = jsonObject.getJSONObject("data").toString()
+            output.data = try {
+                jsonObject.getJSONObject("data").toString()
+            }catch (e: JSONException){
+                jsonObject.getJSONArray("data").toString()
+            }
             return output.data
         } else {
             throw RuntimeException(output.message)

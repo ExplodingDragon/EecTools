@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="activities.MainActivity">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="activities.MainActivity">
    <children>
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" style="-fx-background-color: black;">
          <children>
-            <ImageView fx:id="schoolLogo" fitHeight="80.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="schoolLogo" fitHeight="60.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="user" text="用户" textFill="WHITE">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="16.0" />
                      </font>
                      <HBox.margin>
                         <Insets left="8.0" right="8.0" />
@@ -24,7 +29,7 @@
                   </Label>
                   <Label onMouseClicked="#logout" text="注销" textFill="WHITE">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="16.0" />
                      </font>
                      <HBox.margin>
                         <Insets left="8.0" right="8.0" />
@@ -37,5 +42,72 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </HBox>
+      <ToolBar prefHeight="40.0" prefWidth="200.0">
+         <items>
+            <Label text="当前选择：">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="select" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </items>
+      </ToolBar>
+      <SplitPane dividerPositions="0.2, 0.38, 0.56" VBox.vgrow="ALWAYS">
+         <items>
+            <ListView fx:id="classListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <ListView fx:id="operation" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <ListView fx:id="operationItem" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <VBox maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="0.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="detailsTitle" text="题目标题">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </Label>
+                        <TextArea fx:id="detailsMessage" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="题目内容" wrapText="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextArea>
+                        <CheckBox fx:id="showAnswer" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="显示答案" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="answerView" maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="0.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                     <children>
+                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                           <items>
+                              <TextArea fx:id="userAnswer" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="用户答案" wrapText="true">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </TextArea>
+                              <TextArea fx:id="detailsAnswer" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="参考答案" wrapText="true">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </TextArea>
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+         </items>
+      </SplitPane>
    </children>
 </VBox>

@@ -27,7 +27,6 @@ class LoginActivity : FXMLActivity<VBox>() {
     @FXML
     private lateinit var password: PasswordField
 
-
     @FXML
     private lateinit var saveToken: CheckBox
 
@@ -40,7 +39,6 @@ class LoginActivity : FXMLActivity<VBox>() {
             message.text = "已开启自动登录！"
             root.isDisable = true
             try {
-
                 val data = EecService.cfgPath.readText(Charsets.UTF_8)
                 val token = Json.decodeFromString<LoginInfoBean>(data)
                 EecService.eecClient = EecClient(LoginUtils.withTokenLogin(token))
@@ -48,7 +46,7 @@ class LoginActivity : FXMLActivity<VBox>() {
                 return
             } catch (e: Exception) {
 
-            }finally {
+            } finally {
                 root.isDisable = false
             }
         }
@@ -63,10 +61,10 @@ class LoginActivity : FXMLActivity<VBox>() {
             }
             startMain()
             return
-        }catch (e:Exception){
+        } catch (e: Exception) {
             message.text = e.message
 
-        }finally {
+        } finally {
             root.isDisable = false
 
         }
@@ -74,7 +72,6 @@ class LoginActivity : FXMLActivity<VBox>() {
 
     private fun startMain() {
         startActivity(Intent(this, MainActivity::class))
-        finish()
     }
 
 }

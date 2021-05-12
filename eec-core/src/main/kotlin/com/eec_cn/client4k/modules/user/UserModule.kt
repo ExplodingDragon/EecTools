@@ -1,4 +1,4 @@
-package com.eec_cn.client4k.modules
+package com.eec_cn.client4k.modules.user
 
 import com.eec_cn.client4k.EecClient
 import com.eec_cn.client4k.beans.SchoolInfoBean
@@ -19,15 +19,19 @@ class UserModule(private val eecClient: EecClient) {
                         .replace("-", "+")
                 )
                     .toString(Charsets.UTF_8)
-            Json.decodeFromString(decodeText)
+            Json {
+                ignoreUnknownKeys = true
+            }.decodeFromString(decodeText)
 
         }
 
     val userId: String
-        get() = tokenInfo.man.accountId
+        get() = tokenInfo.userInfo.accountId
 
 
     val schoolInfo: SchoolInfoBean
-        get() = Json.decodeFromString(eecClient.eecConnect
-            .get("/base/schools/${tokenInfo.org.schoolCode}?details=page"))
+        get() = Json.decodeFromString(
+            eecClient.eecConnect
+                .get("/base/schools/${tokenInfo.schoolInfo.schoolCode}?details=page")
+        )
 }

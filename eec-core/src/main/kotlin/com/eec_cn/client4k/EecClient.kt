@@ -2,7 +2,9 @@ package com.eec_cn.client4k
 
 import com.eec_cn.client4k.beans.LoginInfoBean
 import com.eec_cn.client4k.http.*
-import com.eec_cn.client4k.modules.UserModule
+import com.eec_cn.client4k.modules.group.GroupModule
+import com.eec_cn.client4k.modules.operation.OperationModule
+import com.eec_cn.client4k.modules.user.UserModule
 
 
 /**
@@ -30,12 +32,28 @@ class EecClient(private val login: ILogin, private val httpConnect: IHttpConnect
     val authEecConnect: IEECJsonConnect = AuthEecHttpConnect(this, httpConnect, eecUrl)
 
 
-
     init {
         tryLogin()
     }
 
-    val user = UserModule(this)
+    val modules = Modules(this)
+
+    inner class Modules(eecClient: EecClient) {
+        /**
+         * 用户信息管理
+         */
+        val user = UserModule(eecClient)
+
+        /**
+         * 加入班级信息管理
+         */
+        val group = GroupModule(eecClient)
+
+        /**
+         * 作业管理
+         */
+        val operation = OperationModule(eecClient)
+    }
 
     fun tryLogin() {
         token = login.login(eecConnect)

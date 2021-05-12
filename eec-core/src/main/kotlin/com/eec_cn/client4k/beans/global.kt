@@ -8,6 +8,8 @@ data class DataWrapperBean(
     var `data`: String,
     val message: String,
     val status: Int,
-    val success: Boolean,
-    val tracer: String
+    val success: Boolean
 )
+
+@Serializable
+data class NothingBean(val nothing:String = "")

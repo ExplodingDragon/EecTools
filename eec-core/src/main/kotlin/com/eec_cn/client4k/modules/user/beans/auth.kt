@@ -1,5 +1,6 @@
 package com.eec_cn.client4k.beans
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,22 +20,14 @@ data class LoginInfoBean(val accessToken: String, val refreshToken: String)
 
 @Serializable
 data class TokenInfoBean(
-    val aex: Int,
-    val aud: List<String>,
-    val exp: Int,
-    val iat: Int,
-    val iss: String,
-    val jti: String,
-    val man: Man,
-    val nbf: Int,
-    val org: Org,
-    val pms: Pms,
-    val rft: Boolean,
-    val sub: String
+    @SerialName("man")
+    val userInfo: ManBean,
+    @SerialName("org")
+    val schoolInfo: OrgBean,
 )
 
 @Serializable
-data class Man(
+data class ManBean(
     val account: String,
     val accountId: String,
     val memberId: String,
@@ -49,7 +42,7 @@ data class Man(
 
 @Serializable
 
-data class Org(
+data class OrgBean(
     val classradeCode: String,
     val classradeId: String,
     val classradeName: String,
@@ -71,4 +64,14 @@ data class Pms(
     val course: Long,
     val exam: Int,
     val grad: Int
+)
+
+@Serializable
+data class SchoolInfoBean(
+    val accessUrl: String,
+    val badge: String,
+    val code: String,
+    val collegeModels: List<String>,
+    val id: String,
+    val name: String
 )
