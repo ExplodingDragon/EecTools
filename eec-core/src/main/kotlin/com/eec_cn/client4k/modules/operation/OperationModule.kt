@@ -43,6 +43,7 @@ class OperationModule(private val eecClient: EecClient) {
                 QuestionType.MULTIPLE ->
                     decodeFromString<OperationItemDetailsBean<OptionBean>>(get)
                 QuestionType.JUDGMENT,
+                QuestionType.BLANK,
                 QuestionType.SIMPLE_ASK,
                 QuestionType.LARGE_BLANK -> decodeFromString<OperationItemDetailsBean<NothingBean>>(get)
             }

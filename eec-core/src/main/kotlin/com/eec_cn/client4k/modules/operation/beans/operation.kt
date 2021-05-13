@@ -122,6 +122,7 @@ enum class QuestionType(val type: Int, val typeName: String) {
     MULTIPLE(2, "多选题"),
     JUDGMENT(3, "判断题"),
     SIMPLE_ASK(5, "简答题"),
+    BLANK(6, "填空题"),
     LARGE_BLANK(7, "应用题"),
 
 }

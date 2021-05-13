@@ -29,10 +29,10 @@ data class ClassBean(
     val name: String,
     val obeEnabled: Boolean,
     val orgId: String,
-    val publishStatus: Int,
+    val publishStatus: Int = 0,
     val specialtyName: String,
     val startTime: Double,
-    val studentCount: Int,
+    val studentCount: Int = 0,
     val term: String,
     val type: Int,
     val videoDrag: Int
