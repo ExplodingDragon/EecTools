@@ -13,7 +13,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
-    api("com.github.OpenEdgn.Logger4K:logger-core:1.5.1")
+    api("com.github.OpenEdgn.Logger4K:logger-core:1.6.0")
     api("org.json:json:20210307")
     api("org.apache.commons:commons-text:1.9")
     api("com.github.OpenEdgn:Security4k:1.0.0")

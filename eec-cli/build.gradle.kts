@@ -26,7 +26,7 @@ dependencies {
     }
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
     implementation(project(":eec-core"))
-    implementation("com.github.OpenEdgn.Logger4K:logger-console:1.5.1")
+    implementation("com.github.OpenEdgn.Logger4K:logger-console:1.6.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("org.junit.platform:junit-platform-launcher:1.6.2")
 }

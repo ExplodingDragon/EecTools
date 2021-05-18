@@ -12,10 +12,10 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.stage.FileChooser
 import org.apache.commons.text.StringEscapeUtils
 import java.util.*
 import java.util.regex.Matcher
@@ -81,7 +81,60 @@ class MainActivity : FXMLActivity<VBox>() {
         user.text = modules.user.tokenInfo.userInfo.name
         classData.clear()
         classData.addAll(modules.group.classes)
-        window.isFullScreen = true
+    }
+
+    private fun showExport(item: OperationBean): ContextMenu {
+        val contextMenu = ContextMenu()
+        contextMenu.items.add(MenuItem("导出 ${item.operationInfo.name}"))
+        contextMenu.setOnAction {
+            export(item)
+        }
+        return contextMenu
+    }
+
+    private fun export(item: OperationBean) {
+        val fileChooser = FileChooser()
+        fileChooser.title = "保存 $className 作业"
+        fileChooser.initialFileName = "作业-${item.operationInfo.name}.txt"
+        fileChooser.extensionFilters
+            .add(FileChooser.ExtensionFilter("TXT 文件", "*.txt"))
+        val file = fileChooser.showSaveDialog(window.fxWindow) ?: return
+        val toList = EecService.eecClient.modules.operation.getOperationItems(item).map {
+            EecService.eecClient.modules.operation.getOperationItemDetails(it)
+        }.toList()
+        val writer = file.printWriter()
+        if (file.absolutePath.endsWith(".txt")) {
+            toList.forEach { it ->
+                writer.println("""
+                    第 ${it.orderNumber} 题
+                    问 ：${formatHtml(it.titleText)}
+                    ${
+                    if (it.questionType == QuestionType.SINGLE ||
+                        it.questionType == QuestionType.MULTIPLE
+                    ) {
+                        val optionBean = it.options as List<OptionBean>
+                        optionBean.joinToString("\r\n")
+                        { "选项 ${it.id} :  ${formatHtml(it.optionContent)}" }
+                    } else {
+                        ""
+                    }
+                }
+                ${
+                    if (it.userAnswer.isNotBlank()) {
+                        "用户答案： ${formatHtml(it.userAnswer).replace("@@@", "、")}"
+                    } else {
+                        ""
+                    }
+                }
+                 参考答案： ${formatHtml(it.answer).replace("@@@", "、")}
+                 
+                """.lines().joinToString("\r\n") { it.trim() })
+            }
+        } else {
+//MARKDOWN
+        }
+        writer.flush()
+        writer.close()
     }
 
 
@@ -93,7 +146,6 @@ class MainActivity : FXMLActivity<VBox>() {
                 className = newValue.name
                 operationData.clear()
                 operationData.addAll(EecService.eecClient.modules.operation.getOperations(it))
-
             }
         }
         classListView.setCellFactory {
@@ -108,14 +160,17 @@ class MainActivity : FXMLActivity<VBox>() {
                 }
             }
         }
+
         operation.items = operationData
         operationItem.items = operationItemData
         operation.setCellFactory {
-            object : ListCell<OperationBean>() {
+            val value: ListCell<OperationBean> = object : ListCell<OperationBean>() {
                 override fun updateItem(item: OperationBean?, empty: Boolean) {
                     super.updateItem(item, empty)
                     graphic = if (item != null) {
                         val vBox = VBox()
+
+
                         vBox.children.run {
                             val title = Label("${item.operationInfo.name} ")
                             title.font = Font.font(14.0)
@@ -140,6 +195,15 @@ class MainActivity : FXMLActivity<VBox>() {
                     }
                 }
             }
+            value.emptyProperty().addListener { _, _, c ->
+                if (c) {
+                    value.contextMenu = null
+                } else {
+                    value.contextMenu = showExport(value.item)
+                }
+            }
+            value
+
         }
         operationItem.setCellFactory {
             object : ListCell<OperationItemBean>() {
@@ -185,7 +249,7 @@ class MainActivity : FXMLActivity<VBox>() {
                 }
                 """.lines().joinToString("\r\n") { it.trim() }
                 userAnswer.text = "用户答案：\n ${formatHtml(message.userAnswer)}"
-                detailsAnswer.text = "参考答案 ：\n ${formatHtml(message.answer)}"
+                detailsAnswer.text = "参考答案 ：\n ${formatHtml(message.answer).replace("@@@", "、")}"
             }
     }
 
@@ -195,19 +259,19 @@ class MainActivity : FXMLActivity<VBox>() {
     }
 
     @FXML
-    fun logout(mouseEvent: MouseEvent) {
+    fun logout() {
         EecService.cfgPath.delete()
         finish()
     }
 
     private fun formatHtml(data: String): String {
-        return delHTMLTag(StringEscapeUtils.unescapeHtml4(StringEscapeUtils.unescapeXml(data))).replace(" ", "")
+        return delHTMLTag(StringEscapeUtils.unescapeHtml4(StringEscapeUtils.unescapeXml(data)))
     }
 
-    private fun delHTMLTag(htmlStr: String): String {
-        var htmlStr = htmlStr
-        val regexScript = "<script[^>]*?>[\\s\\S]*?<\\/script>" //定义script的正则表达式
-        val regexStyle = "<style[^>]*?>[\\s\\S]*?<\\/style>" //定义style的正则表达式
+    private fun delHTMLTag(html: String): String {
+        var htmlStr = html
+        val regexScript = "<script[^>]*?>[\\s\\S]*?</script>" //定义script的正则表达式
+        val regexStyle = "<style[^>]*?>[\\s\\S]*?</style>" //定义style的正则表达式
         val regexHtml = "<[^>]+>" //定义HTML标签的正则表达式
         val scriptPattern: Pattern = Pattern.compile(regexScript, Pattern.CASE_INSENSITIVE)
         val scriptMatcher: Matcher = scriptPattern.matcher(htmlStr)
