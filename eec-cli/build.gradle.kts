@@ -89,9 +89,9 @@ launch4j {
     icon = "${projectDir}/icon.ico"
     dontWrapJar = true
     outfile = if (OperatingSystem.current().isWindows) {
-        "bot.exe"
+        "eec-tools.exe"
     } else {
-        "bot"
+        "eec-tools"
     }
     headerType = "gui"
     jreRuntimeBits = "64"
