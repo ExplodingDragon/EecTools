@@ -16,7 +16,11 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.stage.FileChooser
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.apache.commons.text.StringEscapeUtils
+import java.io.File
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -92,19 +96,25 @@ class MainActivity : FXMLActivity<VBox>() {
         return contextMenu
     }
 
+    var lastSavePath = File(System.getProperty("user.home"))
     private fun export(item: OperationBean) {
         val fileChooser = FileChooser()
+        fileChooser.initialDirectory = lastSavePath
         fileChooser.title = "保存 $className 作业"
-        fileChooser.initialFileName = "作业-${item.operationInfo.name}.txt"
+        fileChooser.initialFileName = "$className-${item.operationInfo.name}.txt"
         fileChooser.extensionFilters
-            .add(FileChooser.ExtensionFilter("TXT 文件", "*.txt"))
+            .addAll(
+                FileChooser.ExtensionFilter("TXT 文件", "*.txt"),
+                FileChooser.ExtensionFilter("JSON 文件", "*.json")
+            )
         val file = fileChooser.showSaveDialog(window.fxWindow) ?: return
-        val toList = EecService.eecClient.modules.operation.getOperationItems(item).map {
+        lastSavePath = file.parentFile ?: File(System.getProperty("user.home"))
+        val answers = EecService.eecClient.modules.operation.getOperationItems(item).map {
             EecService.eecClient.modules.operation.getOperationItemDetails(it)
         }.toList()
         val writer = file.printWriter()
         if (file.absolutePath.endsWith(".txt")) {
-            toList.forEach { it ->
+            answers.forEach { it ->
                 writer.println("""
                     第 ${it.orderNumber} 题
                     问 ：${formatHtml(it.titleText)}
@@ -130,13 +140,52 @@ class MainActivity : FXMLActivity<VBox>() {
                  
                 """.lines().joinToString("\r\n") { it.trim() })
             }
-        } else {
-//MARKDOWN
+        } else if (file.absolutePath.endsWith(".json")) {
+            //json
+            val exportJSON = ExportJSON(title = item.operationInfo.name)
+
+            answers.forEach { it ->
+                val exportJSONItem = ExportJSONItem(
+                    title = formatHtml(it.titleText),
+                    answer = formatHtml(it.answer).replace("@@@", "、"),
+                    type = it.questionType.typeName
+                )
+                if (it.questionType == QuestionType.SINGLE ||
+                    it.questionType == QuestionType.MULTIPLE
+                ) {
+                    (it.options as List<OptionBean>).forEach { i2 ->
+                        exportJSONItem.options.add(ExportJSONItemOption(i2.id, i2.optionContent))
+                    }
+                }
+                exportJSON.items.add(exportJSONItem)
+            }
+            writer.println(Json.encodeToString(exportJSON))
+
         }
         writer.flush()
         writer.close()
     }
 
+
+    @Serializable
+    data class ExportJSON(
+        val title: String,
+        val items: MutableList<ExportJSONItem> = mutableListOf()
+    )
+
+    @Serializable
+    data class ExportJSONItem(
+        val title: String,
+        val type: String,
+        val answer: String,
+        val options: MutableList<ExportJSONItemOption> = mutableListOf()
+    )
+
+    @Serializable
+    data class ExportJSONItemOption(
+        val id: String,
+        val option: String
+    )
 
     private fun bindView() {
         answerView.visibleProperty().bind(showAnswer.selectedProperty())
